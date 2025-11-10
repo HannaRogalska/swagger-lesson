@@ -67,6 +67,7 @@ paths:
       tags:
         - User
       description: "Register a new user by providing name, email, and password"
+      security: []
       requestBody:
         required: true
         content:
@@ -92,6 +93,7 @@ paths:
       tags:
         - User
       description: "Login with email and password"
+      security: []
       requestBody:
         required: true
         content:
