@@ -1,0 +1,322 @@
+openapi: 3.0.3
+info:
+  title: Todos
+  version: 1.0.0
+servers:
+- description: Development server
+  url: http://localhost:3000
+security:
+- BearerAuth: []
+paths:
+  /todos:
+    get:
+      description: Return all todos
+      operationId: todosGET
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/Todo"
+                type: array
+          description: A list of todos
+      tags:
+      - Todo
+      x-eov-operation-handler: controllers/TodoController
+    post:
+      description: Create new todo
+      operationId: todosPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/_todos_post_request"
+        required: true
+      responses:
+        "201":
+          description: Created new todo
+      tags:
+      - Todo
+      x-eov-operation-handler: controllers/TodoController
+  /todos/{id}:
+    get:
+      description: Return one todo
+      operationId: todosIdGET
+      parameters:
+      - description: id to fetch
+        explode: false
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        style: simple
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Todo"
+          description: One todo
+      tags:
+      - Todo
+      x-eov-operation-handler: controllers/TodoController
+  /user/register:
+    post:
+      description: "Register a new user by providing name, email, and password"
+      operationId: userRegisterPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/_user_register_post_201_response"
+          description: User created successfully
+        "400":
+          description: "Email, name and password required"
+      security: []
+      summary: Create a new user account
+      tags:
+      - User
+      x-eov-operation-handler: controllers/UserController
+  /user/login:
+    post:
+      description: Login with email and password
+      operationId: userLoginPOST
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserWithoutName"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/_user_login_post_200_response"
+          description: Successful authorization
+          headers:
+            Set-Cookie:
+              description: Refresh token cookie
+              explode: false
+              schema:
+                example: refreshToken=abc123; HttpOnly; SameSite=Strict
+                type: string
+              style: simple
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/_user_login_post_401_response"
+          description: Authentication failed (wrong password)
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/_user_login_post_404_response"
+          description: User not found
+      security: []
+      summary: User authorization
+      tags:
+      - User
+      x-eov-operation-handler: controllers/UserController
+  /user/refresh-token:
+    post:
+      description: Uses refreshToken stored in cookies to issue a new access token
+      operationId: userRefreshTokenPOST
+      parameters:
+      - description: Refresh token stored in cookies
+        explode: true
+        in: cookie
+        name: refreshToken
+        required: true
+        schema:
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/_user_login_post_200_response"
+          description: New access token issued
+        "401":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/_user_refresh_token_post_401_response"
+          description: No refresh token
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/_user_refresh_token_post_403_response"
+          description: Invalid or revoked refresh token
+      summary: Get access token
+      tags:
+      - User
+      x-eov-operation-handler: controllers/UserController
+  /user/profile:
+    get:
+      description: Getting user profile
+      operationId: userProfileGET
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/_user_profile_get_200_response"
+          description: Successful get user profile
+        "404":
+          description: User not found
+      security:
+      - BearerAuth: []
+      tags:
+      - User
+      x-eov-operation-handler: controllers/UserController
+components:
+  schemas:
+    Todo:
+      example:
+        createdAt: 2000-01-23T04:56:07.000+00:00
+        __v: 0
+        _id: _id
+        text: text
+        done: true
+        updatedAt: 2000-01-23T04:56:07.000+00:00
+      properties:
+        _id:
+          type: string
+        text:
+          type: string
+        done:
+          type: boolean
+        createdAt:
+          format: date-time
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+        __v:
+          type: integer
+      type: object
+    User:
+      example:
+        password: StrongPass123
+        name: Hanna
+        email: example@gmail.com
+      properties:
+        name:
+          example: Hanna
+          type: string
+        email:
+          example: example@gmail.com
+          type: string
+        password:
+          example: StrongPass123
+          format: password
+          type: string
+      required:
+      - email
+      - name
+      - password
+      type: object
+    UserWithoutName:
+      example:
+        password: StrongPass123
+        email: example@gmail.com
+      properties:
+        email:
+          example: example@gmail.com
+          type: string
+        password:
+          example: StrongPass123
+          format: password
+          type: string
+      required:
+      - email
+      - password
+      type: object
+    _todos_post_request:
+      properties:
+        text:
+          example: Walk the dog
+          type: string
+      type: object
+    _user_register_post_201_response:
+      example:
+        message: User created
+      properties:
+        message:
+          example: User created
+          type: string
+      type: object
+    _user_login_post_200_response:
+      example:
+        accessToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+      properties:
+        accessToken:
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+          type: string
+      type: object
+    _user_login_post_401_response:
+      example:
+        error: Authentication failed
+      properties:
+        error:
+          example: Authentication failed
+          type: string
+      type: object
+    _user_login_post_404_response:
+      example:
+        message: User not found
+      properties:
+        message:
+          example: User not found
+          type: string
+      type: object
+    _user_refresh_token_post_401_response:
+      example:
+        message: No refresh token
+      properties:
+        message:
+          example: No refresh token
+          type: string
+      type: object
+    _user_refresh_token_post_403_response:
+      example:
+        message: Invalid refresh token
+      properties:
+        message:
+          example: Invalid refresh token
+          type: string
+      type: object
+    _user_profile_get_200_response:
+      example:
+        name: Hanna
+        _id: 6529a83fc...
+        email: anna@example.com
+      properties:
+        _id:
+          example: 6529a83fc...
+          type: string
+        name:
+          example: Hanna
+          type: string
+        email:
+          example: anna@example.com
+          type: string
+      type: object
+  securitySchemes:
+    BearerAuth:
+      scheme: bearer
+      type: http
