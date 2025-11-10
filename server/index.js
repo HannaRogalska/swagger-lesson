@@ -1,16 +1,24 @@
-const config = require('./config');
-const logger = require('./logger');
-const ExpressServer = require('./expressServer');
+import config from "./config.js";
+import logger from "./logger.js";
+import ExpressServer from "./expressServer.js";
+import mongoDB from "./db/db.js";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const launchServer = async () => {
   try {
-    this.expressServer = new ExpressServer(config.URL_PORT, config.OPENAPI_YAML);
-    this.expressServer.launch();
-    logger.info('Express server running');
+    await mongoDB();
+    const expressServer = new ExpressServer(
+      config.URL_PORT,
+      config.OPENAPI_YAML
+    );
+    expressServer.launch();
+    logger.info("Express server running");
   } catch (error) {
-    logger.error('Express Server failure', error.message);
-    await this.close();
+    console.error("Express Server failure", error);
+    logger.error("Express Server failure", { error });
   }
 };
 
-launchServer().catch(e => logger.error(e));
+launchServer().catch((e) => logger.error(e));

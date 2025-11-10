@@ -6,23 +6,18 @@
  * parameters are extracted and sent to the service, and where response is handled.
  */
 
-const Controller = require('./Controller');
-const service = require('../services/TodoService');
-const todosGET = async (request, response) => {
+import Controller from './Controller.js';
+import service from '../services/TodoService.js';
+export const todosGET = async (request, response) => {
   await Controller.handleRequest(request, response, service.todosGET);
 };
 
-const todosIdGET = async (request, response) => {
+export const todosIdGET = async (request, response) => {
   await Controller.handleRequest(request, response, service.todosIdGET);
 };
 
-const todosPOST = async (request, response) => {
+export const todosPOST = async (request, response) => {
   await Controller.handleRequest(request, response, service.todosPOST);
 };
 
 
-module.exports = {
-  todosGET,
-  todosIdGET,
-  todosPOST,
-};

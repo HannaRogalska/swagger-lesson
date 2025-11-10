@@ -1,6 +1,6 @@
-const logger = require('../logger');
-const controllers = require('../controllers');
-const Services = require('../services');
+import logger from '../logger';
+import controllers from '../controllers';
+import Services from '../services';
 
 function handleError(err, request, response, next) {
   logger.error(err);
@@ -64,4 +64,4 @@ function openApiRouter() {
   };
 }
 
-module.exports = openApiRouter;
+export default openApiRouter;

@@ -6,28 +6,21 @@
  * parameters are extracted and sent to the service, and where response is handled.
  */
 
-const Controller = require('./Controller');
-const service = require('../services/UserService');
-const userLoginPOST = async (request, response) => {
+import Controller from './Controller.js';
+import service from '../services/UserService.js';
+export const userLoginPOST = async (request, response) => {
   await Controller.handleRequest(request, response, service.userLoginPOST);
 };
 
-const userProfileGET = async (request, response) => {
+export const userProfileGET = async (request, response) => {
   await Controller.handleRequest(request, response, service.userProfileGET);
 };
 
-const userRefreshTokenPOST = async (request, response) => {
+export const userRefreshTokenPOST = async (request, response) => {
   await Controller.handleRequest(request, response, service.userRefreshTokenPOST);
 };
 
-const userRegisterPOST = async (request, response) => {
+export const userRegisterPOST = async (request, response) => {
   await Controller.handleRequest(request, response, service.userRegisterPOST);
 };
 
-
-module.exports = {
-  userLoginPOST,
-  userProfileGET,
-  userRefreshTokenPOST,
-  userRegisterPOST,
-};

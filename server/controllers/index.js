@@ -1,7 +1,7 @@
-const TodoController = require('./TodoController');
-const UserController = require('./UserController');
+import TodoController from './TodoController.js';
+import UserController from './UserController.js';
 
-module.exports = {
+export default {
   TodoController,
   UserController,
 };

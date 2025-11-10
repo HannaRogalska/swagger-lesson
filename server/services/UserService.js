@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-const Service = require('./Service');
+import Service from './Service.js';
 
 /**
 * User authorization
@@ -82,8 +82,7 @@ const userRegisterPOST = ({ user }) => new Promise(
     }
   },
 );
-
-module.exports = {
+ export default {
   userLoginPOST,
   userProfileGET,
   userRefreshTokenPOST,

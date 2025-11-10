@@ -1,8 +1,8 @@
-const fs = require('fs');
-const path = require('path');
-const camelCase = require('camelcase');
-const config = require('../config');
-const logger = require('../logger');
+import fs from 'fs';
+import path from 'path';
+import camelCase from'camelcase';
+import config from'../config.js';
+
 
 class Controller {
   static sendResponse(response, payload) {
@@ -113,4 +113,4 @@ class Controller {
   }
 }
 
-module.exports = Controller;
+export default Controller;

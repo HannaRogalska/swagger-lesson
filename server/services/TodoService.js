@@ -1,66 +1,75 @@
 /* eslint-disable no-unused-vars */
-const Service = require('./Service');
+import Service from './Service.js';
+import TodoModel from "../models/Todo.ts";
 
 /**
 * Return all todos
 *
 * returns List
 * */
-const todosGET = () => new Promise(
-  async (resolve, reject) => {
-    try {
-      resolve(Service.successResponse({
-      }));
-    } catch (e) {
-      reject(Service.rejectResponse(
-        e.message || 'Invalid input',
-        e.status || 405,
-      ));
-    }
-  },
-);
+const todosGET = async () => {
+  try {
+    const todos = await TodoModel.find();
+     return Service.successResponse(todos);
+  } catch (error) {
+    return Service.rejectResponse(
+      error.message || "Failed to fetch todos",
+      error.status || 500
+    );
+  }
+};
 /**
 * Return one todo
 *
 * id String id to fetch
 * returns Todo
 * */
-const todosIdGET = ({ id }) => new Promise(
-  async (resolve, reject) => {
-    try {
-      resolve(Service.successResponse({
-        id,
-      }));
-    } catch (e) {
-      reject(Service.rejectResponse(
-        e.message || 'Invalid input',
-        e.status || 405,
-      ));
+const todosIdGET = async (args) => {
+  const id = args.id
+  
+  try {
+    const oneTodo = await TodoModel.findById(id);
+    
+    
+    if (!oneTodo) {
+      return Service.rejectResponse("Todo not founded", 400);
     }
-  },
-);
+    return Service.successResponse(oneTodo);
+  } catch (error) {
+    return Service.rejectResponse(
+      error.message || "Failed to fetch todo",
+      error.status || 500
+    );
+  }
+}
 /**
 * Create new todo
 *
 * todosPostRequest TodosPostRequest 
 * no response value expected for this operation
 * */
-const todosPOST = ({ todosPostRequest }) => new Promise(
-  async (resolve, reject) => {
-    try {
-      resolve(Service.successResponse({
-        todosPostRequest,
-      }));
-    } catch (e) {
-      reject(Service.rejectResponse(
-        e.message || 'Invalid input',
-        e.status || 405,
-      ));
-    }
-  },
-);
+const todosPOST = async ( todosPostRequest) => {
+  const body = todosPostRequest.body;
 
-module.exports = {
+  if (!body || !body.text) {
+    return Service.rejectResponse("Missing 'text' in request", 400);
+  }
+
+  try {
+    const newTodo = await TodoModel.create({
+      text: body.text,
+      done: body.done || false,
+    });
+
+    return Service.successResponse(newTodo);
+  } catch (error) {
+    return Service.rejectResponse(
+      error.message || "Invalid input",
+      error.status || 500
+    );
+  }
+};
+export default {
   todosGET,
   todosIdGET,
   todosPOST,

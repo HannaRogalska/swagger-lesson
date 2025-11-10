@@ -1,7 +1,7 @@
-const TodoService = require('./TodoService');
-const UserService = require('./UserService');
+import TodoService from './TodoService';
+import UserService from './UserService';
 
-module.exports = {
+export default {
   TodoService,
   UserService,
 };
