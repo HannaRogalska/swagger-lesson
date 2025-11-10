@@ -1,0 +1,263 @@
+openapi: 3.0.3
+info:
+  title: "Todos"
+  version: "1.0.0"
+servers:
+  - url: http://localhost:3000
+    description: "Development server"
+security:
+  - BearerAuth: []
+
+paths:
+  /todos:
+    get:
+      tags:
+        - Todo
+      description: "Return all todos"
+      responses:
+        "200":
+          description: "A list of todos"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Todo"
+    post:
+      tags:
+        - Todo
+      description: "Create new todo"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                  example: "Walk the dog"
+      responses:
+        "201":
+          description: "Created new todo"
+
+  /todos/{id}:
+    get:
+      tags:
+        - Todo
+      description: "Return one todo"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "id to fetch"
+          required: true
+          schema:
+            type: "string"
+      responses:
+        "200":
+          description: "One todo"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Todo"
+
+  /user/register:
+    post:
+      summary: "Create a new user account"
+      tags:
+        - User
+      description: "Register a new user by providing name, email, and password"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "201":
+          description: "User created successfully"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User created"
+        "400":
+          description: "Email, name and password required"
+  /user/login:
+    post:
+      summary: "User authorization"
+      tags:
+        - User
+      description: "Login with email and password"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserWithoutName"
+      responses:
+        "200":
+          description: "Successful authorization"
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: refreshToken=abc123; HttpOnly; SameSite=Strict
+              description: "Refresh token cookie"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        "401":
+          description: "Authentication failed (wrong password)"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Authentication failed"
+        "404":
+          description: "User not found"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User not found"
+  /user/refresh-token:
+    post:
+      summary: "Get access token"
+      tags:
+        - User
+      description: "Uses refreshToken stored in cookies to issue a new access token"
+      parameters:
+        - in: cookie
+          name: refreshToken
+          description: "Refresh token stored in cookies"
+          required: true
+          schema:
+            type: string
+            example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+      responses:
+        "200":
+          description: "New access token issued"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        "401":
+          description: "No refresh token"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "No refresh token"
+        "403":
+          description: "Invalid or revoked refresh token"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid refresh token"
+  /user/profile:
+    get:
+      tags:
+        - User
+      description: "Getting user profile"
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: "Successful get user profile"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    example: "6529a83fc..."
+                  name:
+                    type: string
+                    example: "Hanna"
+                  email:
+                    type: string
+                    example: "anna@example.com"
+        "404":
+          description: "User not found"
+
+components:
+  schemas:
+    Todo:
+      type: object
+      properties:
+        _id:
+          type: string
+        text:
+          type: string
+        done:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        __v:
+          type: integer
+
+    User:
+      type: object
+      required:
+        - name
+        - email
+        - password
+      properties:
+        name:
+          type: string
+          example: "Hanna"
+        email:
+          type: string
+          example: "example@gmail.com"
+        password:
+          type: string
+          format: password
+          example: "StrongPass123"
+    UserWithoutName:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          example: "example@gmail.com"
+        password:
+          type: string
+          format: password
+          example: "StrongPass123"
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
