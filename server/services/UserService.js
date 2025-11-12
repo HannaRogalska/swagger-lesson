@@ -2,6 +2,7 @@
 import Service from "./Service.js";
 import bcrypt from "bcryptjs";
 import UserModel from "../models/User.ts";
+import { createAccessToken, createRefreshToken } from "../helpers/token.js";
 
 /**
  * User authorization
@@ -10,20 +11,30 @@ import UserModel from "../models/User.ts";
  * userWithoutName UserWithoutName
  * returns _user_login_post_200_response
  * */
-const userLoginPOST = ({ userWithoutName }) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      resolve(
-        Service.successResponse({
-          userWithoutName,
-        })
-      );
-    } catch (e) {
-      reject(
-        Service.rejectResponse(e.message || "Invalid input", e.status || 405)
-      );
+const userLoginPOST = async( userWithoutName ) => {
+  const { password, email } = userWithoutName.body;
+  try {
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return Service.rejectResponse("User not found", 404);
     }
-  });
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      return Service.rejectResponse("Authentication failed", 401);
+    }
+    const accessToken = createAccessToken({ userId: user._id })
+    const refreshToken = createRefreshToken({ userId: user._id });
+    user.refreshToken = refreshToken;
+    await user.save();
+    return Service.successResponse({ accessToken, refreshToken });
+    
+  } catch (error) {
+    return Service.rejectResponse(
+      error.message || "Invalid input",
+      error.status || 500
+    );
+  }
+}
 /**
  * Getting user profile
  *
@@ -46,20 +57,10 @@ const userProfileGET = () =>
  * refreshToken String Refresh token stored in cookies
  * returns _user_login_post_200_response
  * */
-const userRefreshTokenPOST = ({ refreshToken }) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      resolve(
-        Service.successResponse({
-          refreshToken,
-        })
-      );
-    } catch (e) {
-      reject(
-        Service.rejectResponse(e.message || "Invalid input", e.status || 405)
-      );
-    }
-  });
+const userRefreshTokenPOST = async ( refreshToken) => {
+ 
+  
+}
 /**
  * Create a new user account
  * Register a new user by providing name, email, and password

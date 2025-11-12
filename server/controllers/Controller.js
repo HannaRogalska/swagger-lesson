@@ -105,7 +105,32 @@ class Controller {
 
   static async handleRequest(request, response, serviceOperation) {
     try {
-      const serviceResponse = await serviceOperation(this.collectRequestParams(request));
+      const serviceResponse = await serviceOperation(
+        this.collectRequestParams(request)
+      );
+
+      if (
+        serviceResponse?.payload?.refreshToken ||
+        serviceResponse?.refreshToken
+      ) {
+        const refreshToken =
+          serviceResponse.payload?.refreshToken || serviceResponse.refreshToken;
+
+        response.cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          sameSite: "strict",
+          maxAge: 7 * 24 * 60 * 60 * 1000, 
+        });
+
+       
+        if (serviceResponse.payload?.refreshToken) {
+          delete serviceResponse.payload.refreshToken;
+        }
+        if (serviceResponse.refreshToken) {
+          delete serviceResponse.refreshToken;
+        }
+      }
+
       Controller.sendResponse(response, serviceResponse);
     } catch (error) {
       Controller.sendError(response, error);
