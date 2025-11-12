@@ -70,6 +70,7 @@ class Controller {
 
   static collectRequestParams(request) {
     const requestParams = {};
+    requestParams.cookies = request.cookies;
     if (request.openapi.schema.requestBody !== null) {
       const { content } = request.openapi.schema.requestBody;
       if (content['application/json'] !== undefined) {
