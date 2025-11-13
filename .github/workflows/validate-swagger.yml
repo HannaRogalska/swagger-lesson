@@ -20,4 +20,4 @@ jobs:
         run: npm install
 
       - name: Validate OpenAPI file
-        run: npx swagger-cli validate ../swagger.yaml
+        run: npx swagger-cli validate ./swagger.yaml
