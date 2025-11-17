@@ -565,3 +565,6 @@
 {"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-11-12T14:36:29.478Z"}
 {"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-11-12T16:08:32.460Z"}
 {"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-11-13T08:57:07.326Z"}
+{"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-11-17T14:28:23.893Z"}
+{"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-11-17T15:48:51.756Z"}
+{"level":"info","message":"Express server running","service":"user-service","timestamp":"2025-11-17T16:53:34.725Z"}
