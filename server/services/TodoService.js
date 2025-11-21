@@ -1,16 +1,16 @@
 /* eslint-disable no-unused-vars */
-import Service from './Service.js';
-import TodoModel from "../models/Todo.ts";
+import Service from "./Service.js";
+import { Todo } from "../models/Todo.js";
 
 /**
-* Return all todos
-*
-* returns List
-* */
+ * Return all todos
+ *
+ * returns List
+ * */
 const todosGET = async () => {
   try {
-    const todos = await TodoModel.find();
-     return Service.successResponse(todos);
+    const todos = await Todo.find();
+    return Service.successResponse(todos);
   } catch (error) {
     return Service.rejectResponse(
       error.message || "Failed to fetch todos",
@@ -19,18 +19,17 @@ const todosGET = async () => {
   }
 };
 /**
-* Return one todo
-*
-* id String id to fetch
-* returns Todo
-* */
+ * Return one todo
+ *
+ * id String id to fetch
+ * returns Todo
+ * */
 const todosIdGET = async (args) => {
-  const id = args.id
-  
+  const id = args.id;
+
   try {
-    const oneTodo = await TodoModel.findById(id);
-    
-    
+    const oneTodo = await Todo.findById(id);
+
     if (!oneTodo) {
       return Service.rejectResponse("Todo not founded", 400);
     }
@@ -41,14 +40,14 @@ const todosIdGET = async (args) => {
       error.status || 500
     );
   }
-}
+};
 /**
-* Create new todo
-*
-* todosPostRequest TodosPostRequest 
-* no response value expected for this operation
-* */
-const todosPOST = async ( todosPostRequest) => {
+ * Create new todo
+ *
+ * todosPostRequest TodosPostRequest
+ * no response value expected for this operation
+ * */
+const todosPOST = async (todosPostRequest) => {
   const body = todosPostRequest.body;
 
   if (!body || !body.text) {
@@ -56,7 +55,7 @@ const todosPOST = async ( todosPostRequest) => {
   }
 
   try {
-    const newTodo = await TodoModel.create({
+    const newTodo = await Todo.create({
       text: body.text,
       done: body.done || false,
     });

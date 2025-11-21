@@ -7,7 +7,7 @@
   "scripts": {
     "prestart": "npm install",
     "build": "tsc",
-    "start": "nodemon dist/index.js"
+    "start": "nodemon index.js"
   },
   "keywords": [
     "openapi-generator",

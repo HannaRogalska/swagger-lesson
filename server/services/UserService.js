@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import Service from "./Service.js";
 import bcrypt from "bcryptjs";
-import UserModel from "../models/User.ts";
+import { User } from "../models/User.js";
 import { createAccessToken, createRefreshToken } from "../helpers/token.js";
 import jwt from "jsonwebtoken";
 /**
@@ -14,7 +14,7 @@ import jwt from "jsonwebtoken";
 const userLoginPOST = async (userWithoutName) => {
   const { password, email } = userWithoutName.body;
   try {
-    const user = await UserModel.findOne({ email });
+    const user = await User.findOne({ email });
     if (!user) {
       return Service.rejectResponse("User not found", 404);
     }
@@ -67,7 +67,7 @@ const userRefreshTokenPOST = async (refreshToken) => {
       return Service.rejectResponse("Invalid refresh token", 403);
     }
     const userId = decoded.userId;
-    const user = await UserModel.findById(userId);
+    const user = await User.findById(userId);
 
     if (!user || user.refreshToken !== refreshTokenToken) {
       return Service.rejectResponse("Refresh token revoked", 403);
@@ -98,7 +98,7 @@ const userRegisterPOST = async (user) => {
   try {
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(password, salt);
-    const newUser = await UserModel.create({
+    const newUser = await User.create({
       user: name,
       password: hashPassword,
       email: email,
