@@ -7,8 +7,7 @@
   "scripts": {
     "prestart": "npm install",
     "build": "tsc",
-    "start": "nodemon index.js",
-    "lint": "eslint ./server"
+    "start": "nodemon index.js"
   },
   "keywords": [
     "openapi-generator",
@@ -46,17 +45,15 @@
     "typescript": "^5.9.3"
   },
   "eslintConfig": {
-  "env": {
-    "node": true,
-    "es2021": true
-  },
-  "extends": "airbnb-base",
-  "parserOptions": {
-    "ecmaVersion": 12,
-    "sourceType": "module"
-  },
-  "rules": {
-  
+    "env": {
+      "node": true,
+      "es2021": true
+    },
+    "extends": "airbnb-base",
+    "parserOptions": {
+      "ecmaVersion": 12,
+      "sourceType": "module"
+    },
+    "rules": {}
   }
-}
 }
