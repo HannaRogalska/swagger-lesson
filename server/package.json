@@ -43,17 +43,5 @@
     "eslint-plugin-import": "^2.32.0",
     "mocha": "^7.1.1",
     "typescript": "^5.9.3"
-  },
-  "eslintConfig": {
-    "env": {
-      "node": true,
-      "es2021": true
-    },
-    "extends": "airbnb-base",
-    "parserOptions": {
-      "ecmaVersion": 12,
-      "sourceType": "module"
-    },
-    "rules": {}
   }
 }

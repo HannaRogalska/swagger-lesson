@@ -8,6 +8,7 @@
 
 import Controller from './Controller.js';
 import service from '../services/UserService.js';
+
 export const userLoginPOST = async (request, response) => {
   await Controller.handleRequest(request, response, service.userLoginPOST);
 };
@@ -23,4 +24,3 @@ export const userRefreshTokenPOST = async (request, response) => {
 export const userRegisterPOST = async (request, response) => {
   await Controller.handleRequest(request, response, service.userRegisterPOST);
 };
-

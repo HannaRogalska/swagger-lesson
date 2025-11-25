@@ -8,6 +8,7 @@
 
 import Controller from './Controller.js';
 import service from '../services/TodoService.js';
+
 export const todosGET = async (request, response) => {
   await Controller.handleRequest(request, response, service.todosGET);
 };
@@ -19,5 +20,3 @@ export const todosIdGET = async (request, response) => {
 export const todosPOST = async (request, response) => {
   await Controller.handleRequest(request, response, service.todosPOST);
 };
-
-

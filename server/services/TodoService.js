@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
-import Service from "./Service.js";
-import { Todo } from "../models/Todo.js";
+import Service from './Service.js';
+import { Todo } from '../models/Todo.js';
 
 /**
  * Return all todos
@@ -13,8 +13,8 @@ const todosGET = async () => {
     return Service.successResponse(todos);
   } catch (error) {
     return Service.rejectResponse(
-      error.message || "Failed to fetch todos",
-      error.status || 500
+      error.message || 'Failed to fetch todos',
+      error.status || 500,
     );
   }
 };
@@ -25,19 +25,19 @@ const todosGET = async () => {
  * returns Todo
  * */
 const todosIdGET = async (args) => {
-  const id = args.id;
+  const { id } = args;
 
   try {
     const oneTodo = await Todo.findById(id);
 
     if (!oneTodo) {
-      return Service.rejectResponse("Todo not founded", 400);
+      return Service.rejectResponse('Todo not founded', 400);
     }
     return Service.successResponse(oneTodo);
   } catch (error) {
     return Service.rejectResponse(
-      error.message || "Failed to fetch todo",
-      error.status || 500
+      error.message || 'Failed to fetch todo',
+      error.status || 500,
     );
   }
 };
@@ -48,7 +48,7 @@ const todosIdGET = async (args) => {
  * no response value expected for this operation
  * */
 const todosPOST = async (todosPostRequest) => {
-  const body = todosPostRequest.body;
+  const { body } = todosPostRequest;
 
   if (!body || !body.text) {
     return Service.rejectResponse("Missing 'text' in request", 400);
@@ -63,8 +63,8 @@ const todosPOST = async (todosPostRequest) => {
     return Service.successResponse(newTodo);
   } catch (error) {
     return Service.rejectResponse(
-      error.message || "Invalid input",
-      error.status || 500
+      error.message || 'Invalid input',
+      error.status || 500,
     );
   }
 };

@@ -1,8 +1,8 @@
-import config from "./config.js";
-import logger from "./logger.js";
-import ExpressServer from "./expressServer.js";
-import mongoDB from "./db/db.js";
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
+import config from './config.js';
+import logger from './logger.js';
+import ExpressServer from './expressServer.js';
+import mongoDB from './db/db.js';
 
 dotenv.config();
 
@@ -11,13 +11,13 @@ const launchServer = async () => {
     await mongoDB();
     const expressServer = new ExpressServer(
       config.URL_PORT,
-      config.OPENAPI_YAML
+      config.OPENAPI_YAML,
     );
     expressServer.launch();
-    logger.info("Express server running");
+    logger.info('Express server running');
   } catch (error) {
-    console.error("Express Server failure", error);
-    logger.error("Express Server failure", { error });
+    console.error('Express Server failure', error);
+    logger.error('Express Server failure', { error });
   }
 };
 

@@ -1,5 +1,4 @@
-import mongoose, { Schema, model } from "mongoose";
-
+import mongoose, { Schema, model } from 'mongoose';
 
 const UserSchema = new Schema({
   user: { type: String, required: true },
@@ -8,6 +7,6 @@ const UserSchema = new Schema({
   refreshToken: { type: String },
 });
 
-export const User = model("User", UserSchema);
+export const User = model('User', UserSchema);
 
 export default User;

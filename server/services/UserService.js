@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
-import Service from "./Service.js";
-import bcrypt from "bcryptjs";
-import { User } from "../models/User.js";
-import { createAccessToken, createRefreshToken } from "../helpers/token.js";
-import jwt from "jsonwebtoken";
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import Service from './Service.js';
+import { User } from '../models/User.js';
+import { createAccessToken, createRefreshToken } from '../helpers/token.js';
 /**
  * User authorization
  * Login with email and password
@@ -16,11 +16,11 @@ const userLoginPOST = async (userWithoutName) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      return Service.rejectResponse("User not found", 404);
+      return Service.rejectResponse('User not found', 404);
     }
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
-      return Service.rejectResponse("Authentication failed", 401);
+      return Service.rejectResponse('Authentication failed', 401);
     }
     const accessToken = createAccessToken({ userId: user._id });
     const refreshToken = createRefreshToken({ userId: user._id });
@@ -29,8 +29,8 @@ const userLoginPOST = async (userWithoutName) => {
     return Service.successResponse({ accessToken, refreshToken });
   } catch (error) {
     return Service.rejectResponse(
-      error.message || "Invalid input",
-      error.status || 500
+      error.message || 'Invalid input',
+      error.status || 500,
     );
   }
 };
@@ -39,16 +39,15 @@ const userLoginPOST = async (userWithoutName) => {
  *
  * returns _user_profile_get_200_response
  * */
-const userProfileGET = () =>
-  new Promise(async (resolve, reject) => {
-    try {
-      resolve(Service.successResponse({}));
-    } catch (e) {
-      reject(
-        Service.rejectResponse(e.message || "Invalid input", e.status || 405)
-      );
-    }
-  });
+const userProfileGET = () => new Promise(async (resolve, reject) => {
+  try {
+    resolve(Service.successResponse({}));
+  } catch (e) {
+    reject(
+      Service.rejectResponse(e.message || 'Invalid input', e.status || 405),
+    );
+  }
+});
 /**
  * Get access token
  * Uses refreshToken stored in cookies to issue a new access token
@@ -59,25 +58,25 @@ const userProfileGET = () =>
 const userRefreshTokenPOST = async (refreshToken) => {
   const refreshTokenToken = refreshToken.cookies.refreshToken;
   if (!refreshTokenToken) {
-    return Service.rejectResponse("Refresh token required", 400);
+    return Service.rejectResponse('Refresh token required', 400);
   }
   try {
     const decoded = jwt.verify(refreshTokenToken, process.env.REFRESH_SECRET);
     if (!decoded) {
-      return Service.rejectResponse("Invalid refresh token", 403);
+      return Service.rejectResponse('Invalid refresh token', 403);
     }
-    const userId = decoded.userId;
+    const { userId } = decoded;
     const user = await User.findById(userId);
 
     if (!user || user.refreshToken !== refreshTokenToken) {
-      return Service.rejectResponse("Refresh token revoked", 403);
+      return Service.rejectResponse('Refresh token revoked', 403);
     }
     const accessToken = createAccessToken({ userId: user._id });
     return Service.successResponse({ accessToken });
   } catch (error) {
     return Service.rejectResponse(
-      error.message || "Refresh error",
-      error.status || 500
+      error.message || 'Refresh error',
+      error.status || 500,
     );
   }
 };
@@ -92,7 +91,7 @@ const userRegisterPOST = async (user) => {
   const { password, name, email } = user.body;
 
   if (!password || !name || !email) {
-    return Service.rejectResponse("Email, name and password required", 400);
+    return Service.rejectResponse('Email, name and password required', 400);
   }
 
   try {
@@ -101,15 +100,15 @@ const userRegisterPOST = async (user) => {
     const newUser = await User.create({
       user: name,
       password: hashPassword,
-      email: email,
+      email,
     });
     const newUserWithoutPassword = newUser.toObject();
     delete newUserWithoutPassword.password;
     return Service.successResponse(newUserWithoutPassword);
   } catch (error) {
     return Service.rejectResponse(
-      error.message || "Invalid input",
-      error.status || 500
+      error.message || 'Invalid input',
+      error.status || 500,
     );
   }
 };

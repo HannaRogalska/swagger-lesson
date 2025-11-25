@@ -1,8 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import camelCase from'camelcase';
-import config from'../config.js';
-
+import camelCase from 'camelcase';
+import config from '../config.js';
 
 class Controller {
   static sendResponse(response, payload) {
@@ -49,8 +48,10 @@ class Controller {
         const extension = fileArray.pop();
         fileArray.push(`_${Date.now()}`);
         uploadedFileName = `${fileArray.join('')}.${extension}`;
-        fs.renameSync(path.join(config.FILE_UPLOAD_PATH, fileObject.filename),
-          path.join(config.FILE_UPLOAD_PATH, uploadedFileName));
+        fs.renameSync(
+          path.join(config.FILE_UPLOAD_PATH, fileObject.filename),
+          path.join(config.FILE_UPLOAD_PATH, uploadedFileName),
+        );
       }
     }
     return uploadedFileName;
@@ -107,23 +108,21 @@ class Controller {
   static async handleRequest(request, response, serviceOperation) {
     try {
       const serviceResponse = await serviceOperation(
-        this.collectRequestParams(request)
+        this.collectRequestParams(request),
       );
 
       if (
-        serviceResponse?.payload?.refreshToken ||
-        serviceResponse?.refreshToken
+        serviceResponse?.payload?.refreshToken
+        || serviceResponse?.refreshToken
       ) {
-        const refreshToken =
-          serviceResponse.payload?.refreshToken || serviceResponse.refreshToken;
+        const refreshToken = serviceResponse.payload?.refreshToken || serviceResponse.refreshToken;
 
-        response.cookie("refreshToken", refreshToken, {
+        response.cookie('refreshToken', refreshToken, {
           httpOnly: true,
-          sameSite: "strict",
-          maxAge: 7 * 24 * 60 * 60 * 1000, 
+          sameSite: 'strict',
+          maxAge: 7 * 24 * 60 * 60 * 1000,
         });
 
-       
         if (serviceResponse.payload?.refreshToken) {
           delete serviceResponse.payload.refreshToken;
         }

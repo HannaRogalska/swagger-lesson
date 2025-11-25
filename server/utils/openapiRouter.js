@@ -49,8 +49,12 @@ function openApiRouter() {
       const controllerName = request.openapi.schema['x-openapi-router-controller'];
       const serviceName = request.openapi.schema['x-openapi-router-service'];
       if (!controllers[controllerName] || controllers[controllerName] === undefined) {
-        handleError(`request sent to controller '${controllerName}' which has not been defined`,
-          request, response, next);
+        handleError(
+          `request sent to controller '${controllerName}' which has not been defined`,
+          request,
+          response,
+          next,
+        );
       } else {
         const apiController = new controllers[controllerName](Services[serviceName]);
         const controllerOperation = request.openapi.schema.operationId;
