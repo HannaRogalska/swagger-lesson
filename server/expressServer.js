@@ -12,9 +12,17 @@ import OpenApiValidator from"express-openapi-validator";
 import logger from"./logger.js";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, 
+  max: 100,
+  message: "Try later",
+});
 
 export default class ExpressServer {
   constructor(port, openApiYaml) {
@@ -32,6 +40,8 @@ export default class ExpressServer {
   setupMiddleware() {
     // this.setupAllowedMedia();
     this.app.use(cors());
+    this.app.use(helmet())
+    this.app.use(limiter);
     this.app.use(bodyParser.json({ limit: "14MB" }));
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: false }));
